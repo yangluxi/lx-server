@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Application context definition for PetClinic Datasource. -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd ">
+
+
+    <!-- 启用注解 -->
+    <context:annotation-config/>
+    <!-- 启动组件扫描，排除@Controller组件，该组件由SpringMVC配置文件扫描 -->
+    <context:component-scan base-package="com.lx.pop">
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!-- <task:annotation-driven />-->
+    <context:property-placeholder location="file:///${configuration.path}/*.properties"/>
+
+    <bean class="org.logicalcobwebs.proxool.ProxoolDataSource" id="dataSource">
+        <property name="alias" value="dataSource"/>
+        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="driverUrl" value="${pop.jdbc.url}"/>
+        <property name="user" value="${pop.jdbc.username}"/>
+        <property name="password" value="${pop.jdbc.password}"/>
+        <property name="houseKeepingSleepTime" value="${proxool.houseKeepingSleepTime}"/>
+        <property name="houseKeepingTestSql" value="${proxool.houseKeepingTestSql}"/>
+        <property name="testBeforeUse" value="${proxool.testBeforeUse}"/>
+        <property name="maximumConnectionCount" value="${proxool.maximumConnectionCount}"/>
+        <property name="minimumConnectionCount" value="${proxool.minimumConnectionCount}"/>
+        <property name="prototypeCount" value="${proxool.prototypeCount}"/>
+        <property name="simultaneousBuildThrottle" value="${proxool.simultaneousBuildThrottle}"/>
+        <property name="maximumActiveTime" value="${proxool.maximumActiveTime}"/>
+        <property name="maximumConnectionLifetime" value="${proxool.maximumConnectionLifetime}"/>
+    </bean>
+
+    <!-- 配置mybatis -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+    </bean>
+
+    <!-- Mybatis第三种    1:原始Dao 开发  2：接口开发（手写） 3：接口式开发（扫描） -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.lx.pop.service.dao"/>
+    </bean>
+
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <!-- <tx:annotation-driven transaction-manager="txManager" />-->
+    <bean id="txManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--  事务管理-->
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="add*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="update*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="upt*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="edit*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="del*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="execute*" propagation="REQUIRES_NEW" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="insert*" propagation="REQUIRES_NEW" isolation="DEFAULT" rollback-for="Exception"/>
+            <tx:method name="batch*" propagation="REQUIRES_NEW" isolation="DEFAULT" rollback-for="Exception"/>
+            <!--<tx:method name="*" read-only="true" />-->
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="operation" expression="execution(* com.lx.pop.service..*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="operation"/>
+    </aop:config>
+
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!-- redis连接池的配置 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="300"/>
+        <property name="maxTotal" value="1000"/>
+
+        <!--<property name="maxTotal" value="${cache.redis.maxActive}" />-->
+        <!--<property name="maxIdle" value="${cache.redis.maxIdle}" />-->
+        <property name="maxWaitMillis" value="2000" />
+        <property name="testOnBorrow" value="true" />
+    </bean>
+
+
+    <!-- 以下是spring-data-redis配置方式 -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:host-name="192.168.0.118" p:port="6379" p:password="123" p:pool-config-ref="poolConfig"/>
+
+    <!--  SDR默认采用的序列化策略有两种，一种是String的序列化策略，一种是JDK的序列化策略。
+       StringRedisTemplate默认采用的是String的序列化策略，保存的key和value都是采用此策略序列化保存的。
+       RedisTemplate默认采用的是JDK的序列化策略，保存的key和value都是采用此策略序列化保存的。
+       就是因为序列化策略的不同，即使是同一个key用不同的Template去序列化，结果是不同的。所以根据key去删除数据的时候就出现了删除失败的问题。
+    -->
+    <!-- redis 序列化策略 ，通常情况下key值采用String序列化策略， -->
+    <!-- 如果不指定序列化策略，StringRedisTemplate的key和value都将采用String序列化策略； -->
+    <!-- 但是RedisTemplate的key和value都将采用JDK序列化 这样就会出现采用不同template保存的数据不能用同一个template删除的问题 -->
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="keySerializer" ref="stringRedisSerializer"/>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+    </bean>
+
+    <!--<bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">-->
+        <!--<property name="connectionFactory" ref="connectionFactory"/>-->
+    <!--</bean>-->
+
+
+</beans>

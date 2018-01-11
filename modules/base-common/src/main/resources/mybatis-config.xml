@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ /**
+  ~  *
+  ~  * Copyright (c) 2017 by Beijing Chuang Xin Qu Cheng Technology Co., Ltd
+  ~  * All rights reserved.
+  ~  *
+  ~  * The information contained herein is confidential and proprietary to
+  ~  * Beijing Beijing Chuang Xin Qu Cheng Technology Co., Ltd, an
+  ~  * considered a trade secret as defined under civil and criminal statutes.
+  ~  * Beijing Chuang Xin Qu Cheng Technology Co., Ltd shall pursue its
+  ~  * civil and criminal remedies in the event of unauthorized use or
+  ~  * misappropriation of its trade secrets.  Use of this information
+  ~  * by anyone other than authorized employees of Beijing Chuang Xin Qu Cheng
+  ~  * Technology Co., Ltd is granted only under a written non-disclosure
+  ~  * agreement, expressly prescribing the scope and manner of such use.
+  ~  *
+  ~  */
+  -->
+
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+<configuration>
+
+	<settings>
+		<!-- 打印查询语句 -->
+		<setting name="logImpl" value="STDOUT_LOGGING" />
+	</settings>
+
+	<typeAliases>
+		<package name="com.lx.pop.entity" />
+	</typeAliases>
+
+
+</configuration>

@@ -1,0 +1,7 @@
+com\lx\pop\service\dao\SPrivilegeEntityDao.class
+com\lx\pop\service\dao\RefRolePrivEntityDao.class
+com\lx\pop\service\impl\SystemServiceImpl.class
+com\lx\pop\service\dao\SAdminEntityDao.class
+com\lx\pop\service\dao\SRoleEntityDao.class
+com\lx\pop\service\dao\RefRoleMenuEntityDao.class
+com\lx\pop\service\dao\SMenuEntityDao.class

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <!-- ================ Shiro start ================ -->
+    <!-- 安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="shiroRealm"/>
+        <!-- 缓存管理器 -->
+        <property name="cacheManager" ref="cacheManager"/>
+    </bean>
+
+
+    <!-- Shiro Filter  动态获取权限   org.apache.shiro.spring.web.ShiroFilterFactoryBean-->
+    <bean id="shiroFilter" class="com.lx.pop.realm.ShiroPermissionFactory">
+        <property name="securityManager" ref="securityManager"/>
+        <!-- loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，请求此地址将由formAuthenticationFilter进行表单认证 -->
+        <property name="loginUrl" value="/system/loginView.htm"/>
+
+        <!-- 通过unauthorizedUrl指定没有权限操作时跳转页面-->
+        <property name="unauthorizedUrl" value="/error.jsp"/>
+
+        <property name="filterChainDefinitions">
+            <value>
+                /error.jsp = anon
+                /system/loginView.htm = anon
+                /system/ajax/login.htm = anon
+                <!-- 退出拦截，请求logout.action执行退出操作 -->
+                <!--/system/logout.htm = logout-->
+                <!--/system/indexView.htm = perms[index:query]-->
+                <!--/system/adminList.htm = perms[user:select]-->
+
+                <!--/*/*.htm = authc-->
+                <!--/ = authc-->
+            </value>
+        </property>
+    </bean>
+
+    <!-- 項目自定义的Realm -->
+    <bean id="shiroRealm" class="com.lx.pop.realm.MyRealm"></bean>
+
+    <!-- 缓存管理器 默认的classpath是在WEB-INF/clases路径下  要加两级文件夹 spring/web/ -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:spring/web/shiro-ehcache.xml"/>
+    </bean>
+
+
+
+
+
+    <!-- ================ Shiro end ================ -->
+
+
+</beans>

@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lx.pop.service.dao.SRoleEntityDao" >
+  <resultMap id="BaseResultMap" type="com.lx.pop.entity.SRoleEntity" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="r_name" property="rName" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="c_time" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="upt_time" property="uptTime" jdbcType="TIMESTAMP" />
+    <result column="c_user" property="cUser" jdbcType="BIGINT" />
+    <result column="upt_user" property="uptUser" jdbcType="BIGINT" />
+    <result column="flag" property="flag" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+  </resultMap>
+
+
+
+  <resultMap id="BaseResultByRoleId" type="com.lx.pop.entity.SRoleEntity">
+
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="r_name" property="rName" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="c_time" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="upt_time" property="uptTime" jdbcType="TIMESTAMP" />
+    <result column="c_user" property="cUser" jdbcType="BIGINT" />
+    <result column="upt_user" property="uptUser" jdbcType="BIGINT" />
+    <result column="flag" property="flag" jdbcType="TINYINT" />
+    <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    <collection property="privilegeEntityList" ofType="com.lx.pop.entity.SPrivilegeEntity">
+      <id column="pId" property="id" jdbcType="BIGINT" />
+      <result column="priv_name" property="privName" jdbcType="VARCHAR" />
+      <result column="url" property="url" jdbcType="VARCHAR" />
+      <result column="menu_id" property="menuId" jdbcType="BIGINT" />
+      <result column="menu_pid" property="menuPid" jdbcType="BIGINT" />
+      <result column="status" property="status" jdbcType="TINYINT" />
+      <result column="sort" property="sort" jdbcType="INTEGER" />
+      <result column="type" property="type" jdbcType="TINYINT" />
+      <result column="c_time" property="cTime" jdbcType="TIMESTAMP" />
+      <result column="upt_time" property="uptTime" jdbcType="TIMESTAMP" />
+      <result column="c_user" property="cUser" jdbcType="BIGINT" />
+      <result column="upt_user" property="uptUser" jdbcType="BIGINT" />
+      <result column="flag" property="flag" jdbcType="TINYINT" />
+      <result column="is_del" property="isDel" jdbcType="TINYINT" />
+    </collection>
+
+  </resultMap>
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      id, r_name, sort, status, type, c_time, upt_time, c_user, upt_user, flag, is_del
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.lx.pop.query.SRoleEntityQuery" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from s_role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    id,r_name,sort,status,type,c_time,upt_time,c_user,upt_user,flag,is_del
+    from s_role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from s_role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.lx.pop.query.SRoleEntityQuery" >
+    delete from s_role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.lx.pop.entity.SRoleEntity" >
+    insert into s_role (id, r_name, sort, 
+      status, type, c_time, 
+      upt_time, c_user, upt_user, 
+      flag, is_del)
+    values (#{id,jdbcType=BIGINT}, #{rName,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{type,jdbcType=TINYINT}, #{cTime,jdbcType=TIMESTAMP}, 
+      #{uptTime,jdbcType=TIMESTAMP}, #{cUser,jdbcType=BIGINT}, #{uptUser,jdbcType=BIGINT}, 
+      #{flag,jdbcType=TINYINT}, #{isDel,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lx.pop.entity.SRoleEntity" >
+    insert into s_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="rName != null" >
+        r_name,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="cTime != null" >
+        c_time,
+      </if>
+      <if test="uptTime != null" >
+        upt_time,
+      </if>
+      <if test="cUser != null" >
+        c_user,
+      </if>
+      <if test="uptUser != null" >
+        upt_user,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="rName != null" >
+        #{rName,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="cTime != null" >
+        #{cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uptTime != null" >
+        #{uptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cUser != null" >
+        #{cUser,jdbcType=BIGINT},
+      </if>
+      <if test="uptUser != null" >
+        #{uptUser,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.lx.pop.query.SRoleEntityQuery" resultType="java.lang.Integer" >
+    select count(*) from s_role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update s_role
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.rName != null" >
+        r_name = #{record.rName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sort != null" >
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=TINYINT},
+      </if>
+      <if test="record.cTime != null" >
+        c_time = #{record.cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.uptTime != null" >
+        upt_time = #{record.uptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.cUser != null" >
+        c_user = #{record.cUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.uptUser != null" >
+        upt_user = #{record.uptUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.flag != null" >
+        flag = #{record.flag,jdbcType=TINYINT},
+      </if>
+      <if test="record.isDel != null" >
+        is_del = #{record.isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update s_role
+    set id = #{record.id,jdbcType=BIGINT},
+      r_name = #{record.rName,jdbcType=VARCHAR},
+      sort = #{record.sort,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=TINYINT},
+      type = #{record.type,jdbcType=TINYINT},
+      c_time = #{record.cTime,jdbcType=TIMESTAMP},
+      upt_time = #{record.uptTime,jdbcType=TIMESTAMP},
+      c_user = #{record.cUser,jdbcType=BIGINT},
+      upt_user = #{record.uptUser,jdbcType=BIGINT},
+      flag = #{record.flag,jdbcType=TINYINT},
+      is_del = #{record.isDel,jdbcType=TINYINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lx.pop.entity.SRoleEntity" >
+    update s_role
+    <set >
+      <if test="rName != null" >
+        r_name = #{rName,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="cTime != null" >
+        c_time = #{cTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uptTime != null" >
+        upt_time = #{uptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cUser != null" >
+        c_user = #{cUser,jdbcType=BIGINT},
+      </if>
+      <if test="uptUser != null" >
+        upt_user = #{uptUser,jdbcType=BIGINT},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=TINYINT},
+      </if>
+      <if test="isDel != null" >
+        is_del = #{isDel,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lx.pop.entity.SRoleEntity" >
+    update s_role
+    set r_name = #{rName,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      type = #{type,jdbcType=TINYINT},
+      c_time = #{cTime,jdbcType=TIMESTAMP},
+      upt_time = #{uptTime,jdbcType=TIMESTAMP},
+      c_user = #{cUser,jdbcType=BIGINT},
+      upt_user = #{uptUser,jdbcType=BIGINT},
+      flag = #{flag,jdbcType=TINYINT},
+      is_del = #{isDel,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+
+  <select id="findPrivByRoleId" parameterType="java.lang.String" resultMap="BaseResultByRoleId">
+
+
+   SELECT
+    sr.*,
+    sp.id pId,
+	sp.priv_name
+    FROM
+      s_role sr,
+        ref_role_priv rp,
+        s_privilege sp
+    WHERE
+        sr.id=rp.role_id
+    AND
+        rp.priv_id = sp.id
+    AND
+        rp.role_id = #{roleId,jdbcType=BIGINT}
+
+  </select>
+
+
+</mapper>
